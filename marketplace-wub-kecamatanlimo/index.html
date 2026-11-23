@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Marketplace WUB — Grup UMKM Limo-Depok</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col">
+
+  <!-- Header & Navigasi -->
+  <header class="bg-emerald-800 text-white sticky top-0 z-30 shadow-md">
+    <div class="max-w-6xl mx-auto px-4 py-3 flex flex-wrap items-center justify-between gap-3">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-xl bg-amber-400 text-emerald-950 font-black flex items-center justify-center text-lg shadow">
+          WUB
+        </div>
+        <div>
+          <h1 class="text-base sm:text-lg font-bold leading-tight">Marketplace WUB Limo-Depok</h1>
+          <p class="text-xs text-emerald-100">Etalase Produk & Jasa Lokal • Kec. Limo, Kota Depok</p>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-2 sm:gap-3">
+        <button
+          id="openAddModalBtn"
+          type="button"
+          class="bg-amber-400 hover:bg-amber-300 text-emerald-950 font-semibold text-xs sm:text-sm px-3 py-2 rounded-lg transition cursor-pointer"
+        >
+          + Tambah Produk
+        </button>
+
+        <button
+          id="openCartBtn"
+          type="button"
+          class="relative bg-emerald-700 hover:bg-emerald-600 text-white font-semibold text-xs sm:text-sm px-3.5 py-2 rounded-lg border border-emerald-500/40 transition cursor-pointer flex items-center gap-2"
+        >
+          <span>Keranjang</span>
+          <span id="cartBadge" class="bg-amber-400 text-emerald-950 text-xs font-extrabold px-2 py-0.5 rounded-full">
+            0
+          </span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Banner Hero & Filter -->
+  <section class="bg-gradient-to-br from-emerald-900 via-emerald-800 to-teal-900 text-white py-8 px-4">
+    <div class="max-w-6xl mx-auto">
+      <div class="max-w-2xl mb-6">
+        <span class="inline-block bg-emerald-700/80 border border-emerald-500/30 text-amber-300 text-xs font-semibold px-3 py-1 rounded-full mb-2">
+          Grup UMKM Limo-Depok
+        </span>
+        <h2 class="text-2xl sm:text-3xl font-extrabold tracking-tight mb-2">
+          Belanja Langsung dari Pelaku UMKM Limo, Depok
+        </h2>
+        <p class="text-sm sm:text-base text-emerald-100">
+          Temukan kebutuhan rumah tangga, kuliner segar, dan layanan pelatihan lokal. Pesanan langsung terhubung ke WhatsApp penjual.
+        </p>
+      </div>
+
+      <!-- Pencarian & Kategori -->
+      <div class="bg-white/10 backdrop-blur-sm p-3 rounded-2xl border border-white/15 flex flex-col md:flex-row gap-3">
+        <div class="flex-1">
+          <input
+            id="searchInput"
+            type="text"
+            placeholder="Cari produk atau nama toko (misal: Lerak, Lemoncuy, Sambal, LPK)..."
+            class="w-full px-4 py-2.5 rounded-xl bg-white text-slate-800 placeholder-slate-400 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400"
+          />
+        </div>
+        <div id="categoryFilter" class="flex flex-wrap gap-1.5 items-center">
+          <button data-category="Semua" class="cat-btn active px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold bg-amber-400 text-emerald-950 cursor-pointer">
+            Semua
+          </button>
+          <button data-category="Kuliner & Minuman" class="cat-btn px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold bg-emerald-950/50 hover:bg-emerald-950/80 text-white cursor-pointer">
+            Kuliner & Minuman
+          </button>
+          <button data-category="Kebersihan Rumah Tangga" class="cat-btn px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold bg-emerald-950/50 hover:bg-emerald-950/80 text-white cursor-pointer">
+            Kebersihan Rumah Tangga
+          </button>
+          <button data-category="Pelatihan & Jasa" class="cat-btn px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold bg-emerald-950/50 hover:bg-emerald-950/80 text-white cursor-pointer">
+            Pelatihan & Jasa
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Katalog Produk -->
+  <main class="max-w-6xl w-full mx-auto px-4 py-8 flex-1">
+    <div class="flex items-center justify-between mb-5">
+      <h3 id="catalogTitle" class="text-lg font-bold text-slate-800">Daftar Produk UMKM</h3>
+      <span id="productCount" class="text-xs sm:text-sm text-slate-500">0 produk ditampilkan</span>
+    </div>
+
+    <div id="productGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5"></div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="bg-slate-900 text-slate-300 py-6 px-4 mt-8">
+    <div class="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-3 text-xs sm:text-sm">
+      <p><strong>Marketplace WUB</strong> — Grup UMKM Kecamatan Limo, Kota Depok, Jawa Barat</p>
+      <p class="text-slate-400">Pemesanan langsung via WhatsApp • Data produk tersimpan lokal</p>
+    </div>
+  </footer>
+
+  <!-- Drawer Keranjang Belanja -->
+  <div id="cartDrawer" class="fixed inset-0 z-40 hidden">
+    <div id="cartBackdrop" class="fixed inset-0 bg-black/50"></div>
+    <aside class="fixed right-0 top-0 bottom-0 w-full max-w-md bg-white shadow-2xl z-50 flex flex-col">
+      <div class="p-4 border-b flex items-center justify-between bg-emerald-800 text-white">
+        <h3 class="font-bold text-base">Keranjang Belanja WUB</h3>
+        <button id="closeCartBtn" type="button" class="text-emerald-100 hover:text-white text-xl font-bold px-2 cursor-pointer">&times;</button>
+      </div>
+
+      <div id="cartItemsContainer" class="p-4 flex-1 overflow-y-auto space-y-3"></div>
+
+      <div class="p-4 border-t bg-slate-50 space-y-3">
+        <div class="flex items-center justify-between text-base font-bold text-slate-900">
+          <span>Total Belanja</span>
+          <span id="cartTotalText" class="text-emerald-700">Rp0</span>
+        </div>
+
+        <div class="space-y-2">
+          <input
+            id="buyerName"
+            type="text"
+            placeholder="Nama lengkap pembeli"
+            class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-emerald-600"
+          />
+          <input
+            id="buyerAddress"
+            type="text"
+            placeholder="Alamat pengiriman (contoh: Limo, Cinere, Depok)"
+            class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-emerald-600"
+          />
+        </div>
+
+        <button
+          id="checkoutWaBtn"
+          type="button"
+          class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2.5 rounded-xl text-sm transition cursor-pointer"
+        >
+          Pesan via WhatsApp
+        </button>
+      </div>
+    </aside>
+  </div>
+
+  <!-- Modal Tambah Produk -->
+  <div id="addProductModal" class="fixed inset-0 z-50 hidden items-center justify-center p-4">
+    <div id="addModalBackdrop" class="fixed inset-0 bg-black/50"></div>
+    <div class="relative bg-white rounded-2xl shadow-xl max-w-md w-full p-6 z-10">
+      <div class="flex items-center justify-between mb-4">
+        <h3 class="text-lg font-bold text-slate-900">Tambah Produk UMKM Baru</h3>
+        <button id="closeAddModalBtn" type="button" class="text-slate-400 hover:text-slate-700 text-xl font-bold cursor-pointer">&times;</button>
+      </div>
+
+      <form id="addProductForm" class="space-y-3">
+        <div>
+          <label class="block text-xs font-semibold text-slate-600 mb-1">Nama Produk</label>
+          <input id="newProdName" type="text" required placeholder="Contoh: Sabun Lerak SAPIRCling 1L" class="w-full px-3 py-2 border rounded-lg text-sm" />
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-slate-600 mb-1">Nama Toko / UMKM</label>
+          <input id="newProdStore" type="text" required placeholder="Contoh: SAPIRCling Limo" class="w-full px-3 py-2 border rounded-lg text-sm" />
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-semibold text-slate-600 mb-1">Harga (Rp)</label>
+            <input id="newProdPrice" type="number" min="500" required placeholder="20000" class="w-full px-3 py-2 border rounded-lg text-sm" />
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-600 mb-1">Kategori</label>
+            <select id="newProdCategory" class="w-full px-3 py-2 border rounded-lg text-sm bg-white">
+              <option value="Kuliner & Minuman">Kuliner & Minuman</option>
+              <option value="Kebersihan Rumah Tangga">Kebersihan Rumah Tangga</option>
+              <option value="Pelatihan & Jasa">Pelatihan & Jasa</option>
+            </select>
+          </div>
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-slate-600 mb-1">No. WhatsApp Penjual (format 628...)</label>
+          <input id="newProdWa" type="text" required value="6281234567890" class="w-full px-3 py-2 border rounded-lg text-sm" />
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-slate-600 mb-1">Deskripsi Singkat</label>
+          <textarea id="newProdDesc" rows="2" required placeholder="Deskripsi produk lokal..." class="w-full px-3 py-2 border rounded-lg text-sm"></textarea>
+        </div>
+
+        <button type="submit" class="w-full bg-emerald-700 hover:bg-emerald-800 text-white font-bold py-2.5 rounded-xl text-sm cursor-pointer">
+          Simpan ke Katalog
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    const STORAGE_PRODUCTS_KEY = 'wub_limo_depok_products_v1';
+    const STORAGE_CART_KEY = 'wub_limo_depok_cart_v1';
+    const DEFAULT_WA = '6281234567890'; // Ganti dengan nomor WhatsApp admin WUB (format 628...)
+
+    const initialProducts = [
+      {
+        id: 'p1',
+        name: 'Sabun Cuci Piring Lerak SAPIRCling (1 Liter)',
+        store: 'SAPIRCling Limo',
+        price: 20000,
+        category: 'Kebersihan Rumah Tangga',
+        wa: DEFAULT_WA,
+        desc: 'Pembersih peralatan makan berbahan lerak alami, lembut di tangan dan ramah lingkungan.',
+        badge: 'Lokal Limo'
+      },
+      {
+        id: 'p2',
+        name: 'Cairan Penambah Busa Rumah Tangga',
+        store: 'SAPIRCling Limo',
+        price: 15000,
+        category: 'Kebersihan Rumah Tangga',
+        wa: DEFAULT_WA,
+        desc: 'Pendukung formulasi sabun cair rumah tangga untuk hasil pembersihan maksimal.',
+        badge: 'Unggulan'
+      },
+      {
+        id: 'p3',
+        name: 'Lemoncuy Segar Siap Seduh',
+        store: 'Lemoncuy Depok',
+        price: 18000,
+        category: 'Kuliner & Minuman',
+        wa: DEFAULT_WA,
+        desc: 'Minuman ekstrak lemon segar dengan rasa asam manis menyegarkan untuk harian.',
+        badge: 'Segar'
+      },
+      {
+        id: 'p4',
+        name: 'Paket Kuliner D’nisa Food',
+        store: 'D’nisa Food',
+        price: 25000,
+        category: 'Kuliner & Minuman',
+        wa: DEFAULT_WA,
+        desc: 'Hidangan rumahan siap santap khas UMKM Depok untuk makan siang atau acara keluarga.',
+        badge: 'Rumahan'
+      },
+      {
+        id: 'p5',
+        name: 'Ayam Goreng SiMandorz',
+        store: 'Ayam Goreng SiMandorz',
+        price: 22000,
+        category: 'Kuliner & Minuman',
+        wa: DEFAULT_WA,
+        desc: 'Ayam goreng berbumbu gurih meresap, cocok untuk santapan keluarga di Limo dan sekitarnya.',
+        badge: 'Terlaris'
+      },
+      {
+        id: 'p6',
+        name: 'Sambal Bu Marni Pedas Gurih',
+        store: 'Sambal Bu Marni',
+        price: 17000,
+        category: 'Kuliner & Minuman',
+        wa: DEFAULT_WA,
+        desc: 'Sambal rumahan bercita rasa pedas gurih yang pas dipadukan dengan aneka lauk.',
+        badge: 'Pedas Nikmat'
+      },
+      {
+        id: 'p7',
+        name: 'Galantin Kembang Turi',
+        store: 'UMKM Galantin Limo',
+        price: 24000,
+        category: 'Kuliner & Minuman',
+        wa: DEFAULT_WA,
+        desc: 'Olahan galantin bercita rasa khas dengan sentuhan kembang turi yang unik.',
+        badge: 'Khas'
+      },
+      {
+        id: 'p8',
+        name: 'Kelas Praktis Digital Marketing & AI UMKM',
+        store: 'LPK LINAD / WUB Limo',
+        price: 50000,
+        category: 'Pelatihan & Jasa',
+        wa: DEFAULT_WA,
+        desc: 'Pelatihan pembuatan konten promosi, riset pasar, dan pemasaran digital untuk pelaku usaha.',
+        badge: 'Pelatihan'
+      }
+    ];
+
+    let products = loadProducts();
+    let cart = loadCart();
+    let activeCategory = 'Semua';
+    let searchQuery = '';
+
+    function loadProducts() {
+      try {
+        const raw = localStorage.getItem(STORAGE_PRODUCTS_KEY);
+        if (!raw) {
+          localStorage.setItem(STORAGE_PRODUCTS_KEY, JSON.stringify(initialProducts));
+          return [...initialProducts];
+        }
+        const parsed = JSON.parse(raw);
+        return Array.isArray(parsed) && parsed.length ? parsed : [...initialProducts];
+      } catch {
+        return [...initialProducts];
+      }
+    }
+
+    function saveProducts() {
+      localStorage.setItem(STORAGE_PRODUCTS_KEY, JSON.stringify(products));
+    }
+
+    function loadCart() {
+      try {
+        const raw = localStorage.getItem(STORAGE_CART_KEY);
+        const parsed = raw ? JSON.parse(raw) : [];
+        return Array.isArray(parsed) ? parsed : [];
+      } catch {
+        return [];
+      }
+    }
+
+    function saveCart() {
+      localStorage.setItem(STORAGE_CART_KEY, JSON.stringify(cart));
+    }
+
+    function formatRupiah(amount) {
+      return new Intl.NumberFormat('id-ID', {
+        style: 'currency',
+        currency: 'IDR',
+        maximumFractionDigits: 0
+      }).format(Number(amount) || 0);
+    }
+
+    function getSvgThumb(category, index) {
+      const palettes = {
+        'Kuliner & Minuman': ['#fef3c7', '#d97706', '#78350f'],
+        'Kebersihan Rumah Tangga': ['#d1fae5', '#059669', '#064e3b'],
+        'Pelatihan & Jasa': ['#e0e7ff', '#4f46e5', '#1e1b4b']
+      };
+      const [bg, accent, dark] = palettes[category] || ['#e2e8f0', '#0f766e', '#1e293b'];
+      const label = category.split(' ')[0];
+      return `
+        <svg viewBox="0 0 320 180" class="w-full h-40 object-cover bg-slate-100" xmlns="http://www.w3.org/2000/svg">
+          <rect width="320" height="180" fill="${bg}" />
+          <circle cx="265" cy="36" r="52" fill="${accent}" fill-opacity="0.16" />
+          <circle cx="55" cy="150" r="64" fill="${accent}" fill-opacity="0.12" />
+          <rect x="24" y="24" width="94" height="26" rx="13" fill="${accent}" />
+          <text x="71" y="41" text-anchor="middle" fill="#ffffff" font-size="11" font-weight="700" font-family="sans-serif">${label}</text>
+          <text x="24" y="102" fill="${dark}" font-size="18" font-weight="800" font-family="sans-serif">Produk WUB #${index + 1}</text>
+          <text x="24" y="126" fill="${dark}" fill-opacity="0.75" font-size="12" font-family="sans-serif">Kecamatan Limo • Depok</text>
+        </svg>
+      `;
+    }
+
+    function renderProducts() {
+      const grid = document.getElementById('productGrid');
+      const countEl = document.getElementById('productCount');
+
+      const filtered = products.filter((item) => {
+        const matchesCategory = activeCategory === 'Semua' || item.category === activeCategory;
+        const q = searchQuery.trim().toLowerCase();
+        const matchesSearch =
+          !q ||
+          item.name.toLowerCase().includes(q) ||
+          item.store.toLowerCase().includes(q) ||
+          item.desc.toLowerCase().includes(q);
+        return matchesCategory && matchesSearch;
+      });
+
+      countEl.textContent = `${filtered.length} produk ditampilkan`;
+
+      if (!filtered.length) {
+        grid.innerHTML = `
+          <div class="col-span-full bg-white border border-slate-200 rounded-2xl p-8 text-center">
+            <p class="font-semibold text-slate-700 mb-1">Produk tidak ditemukan</p>
+            <p class="text-sm text-slate-500">Coba kata kunci lain atau pilih kategori "Semua".</p>
+          </div>
+        `;
+        return;
+      }
+
+      grid.innerHTML = filtered
+        .map((item, idx) => `
+          <article class="bg-white rounded-2xl border border-slate-200/90 shadow-sm hover:shadow-md transition overflow-hidden flex flex-col">
+            <div class="relative">
+              ${getSvgThumb(item.category, idx)}
+              <span class="absolute top-3 right-3 bg-white/95 text-emerald-900 text-[11px] font-bold px-2.5 py-1 rounded-full shadow-sm">
+                ${escapeHtml(item.badge || 'UMKM Limo')}
+              </span>
+            </div>
+            <div class="p-4 flex-1 flex flex-col justify-between gap-3">
+              <div>
+                <p class="text-xs font-semibold text-emerald-700 mb-0.5">${escapeHtml(item.store)}</p>
+                <h4 class="font-bold text-slate-900 text-sm sm:text-base leading-snug mb-1.5">${escapeHtml(item.name)}</h4>
+                <p class="text-xs text-slate-500 line-clamp-2">${escapeHtml(item.desc)}</p>
+              </div>
+
+              <div class="pt-2 border-t border-slate-100 flex items-center justify-between gap-2">
+                <span class="font-extrabold text-emerald-800 text-sm sm:text-base">${formatRupiah(item.price)}</span>
+                <button
+                  type="button"
+                  onclick="addToCart('${item.id}')"
+                  class="bg-emerald-700 hover:bg-emerald-800 text-white text-xs font-semibold px-3 py-2 rounded-xl transition cursor-pointer"
+                >
+                  + Keranjang
+                </button>
+              </div>
+            </div>
+          </article>
+        `)
+        .join('');
+    }
+
+    function addToCart(productId) {
+      const prod = products.find((p) => p.id === productId);
+      if (!prod) return;
+
+      const existing = cart.find((c) => c.id === productId);
+      if (existing) {
+        existing.qty += 1;
+      } else {
+        cart.push({
+          id: prod.id,
+          name: prod.name,
+          store: prod.store,
+          price: prod.price,
+          wa: prod.wa || DEFAULT_WA,
+          qty: 1
+        });
+      }
+      saveCart();
+      renderCart();
+      openCart();
+    }
+
+    function updateQty(productId, delta) {
+      const idx = cart.findIndex((c) => c.id === productId);
+      if (idx === -1) return;
+      cart[idx].qty += delta;
+      if (cart[idx].qty <= 0) {
+        cart.splice(idx, 1);
+      }
+      saveCart();
+      renderCart();
+    }
+
+    function renderCart() {
+      const badge = document.getElementById('cartBadge');
+      const container = document.getElementById('cartItemsContainer');
+      const totalText = document.getElementById('cartTotalText');
+
+      const totalQty = cart.reduce((sum, item) => sum + item.qty, 0);
+      const totalAmount = cart.reduce((sum, item) => sum + item.price * item.qty, 0);
+
+      badge.textContent = String(totalQty);
+      totalText.textContent = formatRupiah(totalAmount);
+
+      if (!cart.length) {
+        container.innerHTML = `
+          <div class="text-center py-12 text-slate-400 text-sm">
+            Keranjang masih kosong. Pilih produk UMKM Limo-Depok untuk mulai memesan.
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = cart
+        .map((item) => `
+          <div class="border border-slate-200 rounded-xl p-3 flex items-center justify-between gap-3 bg-white">
+            <div class="min-w-0">
+              <p class="font-bold text-sm text-slate-900 truncate">${escapeHtml(item.name)}</p>
+              <p class="text-xs text-slate-500">${escapeHtml(item.store)} • ${formatRupiah(item.price)}</p>
+            </div>
+            <div class="flex items-center gap-1.5 shrink-0">
+              <button type="button" onclick="updateQty('${item.id}', -1)" class="w-7 h-7 rounded-lg bg-slate-100 hover:bg-slate-200 font-bold text-sm cursor-pointer">-</button>
+              <span class="w-6 text-center text-xs font-bold">${item.qty}</span>
+              <button type="button" onclick="updateQty('${item.id}', 1)" class="w-7 h-7 rounded-lg bg-slate-100 hover:bg-slate-200 font-bold text-sm cursor-pointer">+</button>
+            </div>
+          </div>
+        `)
+        .join('');
+    }
+
+    function checkoutWhatsApp() {
+      if (!cart.length) {
+        alert('Keranjang belanja masih kosong.');
+        return;
+      }
+
+      const buyerName = document.getElementById('buyerName').value.trim() || 'Pembeli WUB';
+      const buyerAddress = document.getElementById('buyerAddress').value.trim() || 'Kec. Limo, Depok';
+      const totalAmount = cart.reduce((sum, item) => sum + item.price * item.qty, 0);
+      const targetWa = (cart[0].wa || DEFAULT_WA).replace(/\D/g, '') || DEFAULT_WA;
+
+      const lines = [
+        'Halo Admin Marketplace WUB Limo-Depok, saya ingin memesan:',
+        ''
+      ];
+
+      cart.forEach((item, i) => {
+        lines.push(`${i + 1}. ${item.name} (${item.store}) - ${item.qty}x = ${formatRupiah(item.price * item.qty)}`);
+      });
+
+      lines.push('');
+      lines.push(`Total: ${formatRupiah(totalAmount)}`);
+      lines.push(`Nama: ${buyerName}`);
+      lines.push(`Alamat: ${buyerAddress}`);
+
+      const url = `https://wa.me/${targetWa}?text=${encodeURIComponent(lines.join('\n'))}`;
+      window.open(url, '_blank', 'noopener,noreferrer');
+    }
+
+    function escapeHtml(str) {
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+    }
+
+    // Event Listeners
+    const cartDrawer = document.getElementById('cartDrawer');
+    const openCart = () => cartDrawer.classList.remove('hidden');
+    const closeCart = () => cartDrawer.classList.add('hidden');
+
+    document.getElementById('openCartBtn').addEventListener('click', openCart);
+    document.getElementById('closeCartBtn').addEventListener('click', closeCart);
+    document.getElementById('cartBackdrop').addEventListener('click', closeCart);
+    document.getElementById('checkoutWaBtn').addEventListener('click', checkoutWhatsApp);
+
+    const addModal = document.getElementById('addProductModal');
+    const openAddModal = () => {
+      addModal.classList.remove('hidden');
+      addModal.classList.add('flex');
+    };
+    const closeAddModal = () => {
+      addModal.classList.add('hidden');
+      addModal.classList.remove('flex');
+    };
+
+    document.getElementById('openAddModalBtn').addEventListener('click', openAddModal);
+    document.getElementById('closeAddModalBtn').addEventListener('click', closeAddModal);
+    document.getElementById('addModalBackdrop').addEventListener('click', closeAddModal);
+
+    document.getElementById('addProductForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const name = document.getElementById('newProdName').value.trim();
+      const store = document.getElementById('newProdStore').value.trim();
+      const price = Number(document.getElementById('newProdPrice').value);
+      const category = document.getElementById('newProdCategory').value;
+      const wa = document.getElementById('newProdWa').value.trim().replace(/\D/g, '') || DEFAULT_WA;
+      const desc = document.getElementById('newProdDesc').value.trim();
+
+      if (!name || !store || !price || !desc) return;
+
+      products.unshift({
+        id: 'p_' + Date.now(),
+        name,
+        store,
+        price,
+        category,
+        wa,
+        desc,
+        badge: 'Baru'
+      });
+
+      saveProducts();
+      renderProducts();
+      e.target.reset();
+      document.getElementById('newProdWa').value = DEFAULT_WA;
+      closeAddModal();
+    });
+
+    document.getElementById('searchInput').addEventListener('input', (e) => {
+      searchQuery = e.target.value;
+      renderProducts();
+    });
+
+    document.querySelectorAll('.cat-btn').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        activeCategory = btn.dataset.category;
+        document.querySelectorAll('.cat-btn').forEach((b) => {
+          b.className = 'cat-btn px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold bg-emerald-950/50 hover:bg-emerald-950/80 text-white cursor-pointer';
+        });
+        btn.className = 'cat-btn active px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold bg-amber-400 text-emerald-950 cursor-pointer';
+        renderProducts();
+      });
+    });
+
+    // Render awal
+    renderProducts();
+    renderCart();
+  </script>
+</body>
+</html>
